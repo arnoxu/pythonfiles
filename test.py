@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 #-_- coding: utf-8 -_-
+'''
+use fabric to manager the linux servers
+'''
 from fabric.api import *
 from fabric.colors import *
 
