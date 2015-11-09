@@ -16,28 +16,6 @@ url = 'http://gc.agg028.com/agingame2/images/ad/goodroad_loading_hw_zh.jpg'
 
 html = getHtml(url)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ##test variable in function
 ##variables in function can not be used as global variables.
 #def func_va():
@@ -46,10 +24,6 @@ html = getHtml(url)
 #func_va()
 #print test_va
 
-
-
-=======
-#-_- coding: utf-8 -_-
 '''
 use fabric to manager the linux servers
 '''
@@ -75,4 +49,3 @@ def uname_hosts():
 @roles('mysql')
 def mysql_install():
     run('yum -y install mysql mysql-devel')
->>>>>>> 4168ae6cadcbad609b54190435a15236c2771bba
