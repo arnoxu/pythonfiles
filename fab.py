@@ -13,9 +13,18 @@ def _confirm():
     else:
         print "You wish to abort."
 
+#local文件的内容的判断
+def _contains(shell_name, big_cut):
+    with settings(warn_only = True):
+        big_cut_d = local('echo %s |sed \'s/ /, /g\'' % big_cut, capture = True)
+        
+        result = local('cat %s |egrep "%s"' % (shell_name, big_cut_d), capture = True)
+    if result.failed:
+        return False
+    else:
+        return True
+
 def deploy():
     execute(_confirm)
-
-
 
 
