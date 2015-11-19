@@ -56,6 +56,11 @@ def not_primer(num):
         return True
 num_list2 = range(1, 101)
 
+# 忽略大小写排序
+def ign_case(x, y):
+    return cmp(x.lower(), y.lower())
+
+print sorted(['Adam', 'LISA', 'barT'], ing_case)
 
 
 
