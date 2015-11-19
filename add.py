@@ -43,8 +43,8 @@ def _check_host():
 
 #获取脚本中的大客户名单
 def _get_cut(shell_name):
-    f_shell = open('%s/%s' %(local_dir, shell_name), 'r')
-    shell_list = f_shell.readlines()
+    with open('%s/%s' %(local_dir, shell_name), 'r') as f_shell:
+        shell_list = f_shell.readlines()
     for line in shell_list:
         if 'username=(' in line:
             big_cut_name = line
