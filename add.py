@@ -20,6 +20,7 @@ shell_gc = 'check-gc.sh'
 env.roledefs = {
     'ONE':['192.168.100.56', '192.168.100.57', '192.168.100.71'],
     'TWO':['202.55.16.115'],
+    'BAK':['192.168.100.56'],
 }
 
 env.user = 'tomcat'
@@ -40,6 +41,23 @@ def _check_host():
         env.key_filename = '/opt/fab/KEYS/eastern_server' 
     else:
         env.password = 'ygGP2&huhytAqza!NwJR'
+
+#判断本地大客户脚本是否与远程服务器的一致
+#如果不一致则进行更新
+@runs_once
+def _get_shell():
+    with lcd(local_dir):
+        local('rm -rf %s.bak' % shell_name)
+        get('%s/%s' %(shell_dir, shell_name), '%s/%s.bak' %(local_dir, shell_name))
+        with settings(warn_only = 1):
+            result = local('diff %s %s.bak' %(shell_name, shell_name), capture = True)
+        if result == '':
+            pass
+        else:
+            local('rm -rf %s %s %s' %(shell_name, shell_gi, shell_gc))
+            local('cp %s.bak %s' %(shell_name, shell_name))
+            local('cp %s.bak %s' %(shell_name, shell_gi))
+            local('cp %s.bak %s' %(shell_name, shell_gc))
 
 #获取脚本中的大客户名单
 def _get_cut(shell_name):
@@ -154,6 +172,7 @@ def _commit_git(commit_log, big_cut):
 def add(big_cut):
     '''用法： add:"账号:姓名 账号:姓名"'''
     execute(_check_host)
+    execute(_get_shell)
     execute(_add_local, big_cut)
     execute(_commit_git, "添加大客户：", big_cut)
     execute(_decide)
@@ -164,13 +183,14 @@ def add(big_cut):
 def delete(big_cut):
     '''用法： delete:"账号:姓名 账号:姓名"'''
     execute(_check_host)
+    execute(_get_shell)
     execute(_delete_local, big_cut)
     execute(_commit_git, "删除大客户：", big_cut)
     execute(_decide)
 
 @task
 def update():
-    '''更新脚本到远程服务器。'''
+    '''更新大客户脚本到远程服务器。'''
     execute(_put_ONE)
     execute(_put_TWO)
 
