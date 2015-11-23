@@ -77,35 +77,37 @@ def _contains_add(shell_name, big_cut):
     with settings(warn_only = True):
         big_cut_list = big_cut.split(' ')
         big_cut_name = _get_cut(shell_name)
-        for big_cut_e in big_cut_list:
+        for big_cut_i in big_cut_list:
+            big_cut_e = big_cut_i.replace('/', '\/')
             if big_cut_e in except_list:
                 continue
-            elif big_cut_e not in big_cut_name:
+            elif big_cut_i not in big_cut_name:
                 local ('sed -i \'/username=(/s/=(/=(%s /\' %s ' % (big_cut_e, shell_name))
                 big_cut_name = _get_cut(shell_name)
-                if big_cut_e not in big_cut_name:
+                if big_cut_i not in big_cut_name:
                     print red("大客户添加失败，请检查脚本。")
                 else:
-                    print yellow("大客户 %s 添加成功。" % big_cut_e)
+                    print yellow("大客户 %s 添加成功。" % big_cut_i)
             else:
-                print yellow("大客户 %s 已经存在脚本 %s 中" % (big_cut_e, shell_name))
+                print yellow("大客户 %s 已经存在脚本 %s 中" % (big_cut_i, shell_name))
 
 def _contains_delete(shell_name, big_cut):
     with settings(warn_only = True):
         big_cut_list = big_cut.split(' ')
         big_cut_name = _get_cut(shell_name)
-        for big_cut_e in big_cut_list:
+        for big_cut_i in big_cut_list:
+            big_cut_e = big_cut_i.replace('/', '\/')
             if big_cut_e in except_list:
                 continue
-            elif big_cut_e not in big_cut_name:
-                print yellow("需要删除的大客户 %s 不在脚本 %s 中" % (big_cut_e, shell_name))
+            elif big_cut_i not in big_cut_name:
+                print yellow("需要删除的大客户 %s 不在脚本 %s 中" % (big_cut_i, shell_name))
             else:
                 local ('sed -i \'/username=(/s/%s //g\' %s ' % (big_cut_e, shell_name))
                 big_cut_name = _get_cut(shell_name)
-                if big_cut_e not in big_cut_name:
-                    print yellow("大客户 %s 删除成功。" % big_cut_e)
+                if big_cut_i not in big_cut_name:
+                    print yellow("大客户 %s 删除成功。" % big_cut_i)
                 else:
-                    print red("大客户 %s 删除失败，请检查脚本。" % big_cut_e)
+                    print red("大客户 %s 删除失败，请检查脚本。" % big_cut_i)
 
 #添加大客户
 @runs_once
@@ -191,8 +193,20 @@ def delete(big_cut):
 @task
 def update():
     '''更新大客户脚本到远程服务器。'''
-    execute(_put_ONE)
-    execute(_put_TWO)
+    with lcd(local_dir):
+        commit_log_in = "手动更新大客户脚本到远程服务器"
+        try:    
+            local('git add ../*')
+            local("git commit -m ''' %s '''" % commit_log_in)
+            execute(_put_ONE)
+            execute(_put_TWO)
+        except:
+            result = confirm(green("大客户脚本没有修改，请确认是否更新到远程服务器："))
+            if result:
+                execute(_put_ONE)
+                execute(_put_TWO)
+            else:
+                print red("更新大客户脚本到远程服务器失败。")
 
 ##获取脚本   
 #@task
