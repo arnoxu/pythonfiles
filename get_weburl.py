@@ -10,9 +10,6 @@ log_dir = '/opt/tomcat-7.0/logs'
 log_error = 'error_log.txt'
 log_name_list = []
 
-#get the names of GI logs
-gi_log_list = os.popen('ls %s/* |grep "catalina.out"' % log_dir).readlines()
-
 #get the correct log names 
 def estimate_log(log_name):
     for line in gi_log_list:
@@ -49,18 +46,15 @@ def help_doc(log_name_in):
         print "\033[0;32;40m介绍：用于查看GI日志是否存在可能的丢额，如果需要查看丢额的用户是过哪个web登陆的，则提供[用户名] [关联提案号]\033[0m"
         print '\033[0;32;40m用法: ./get_weburl.py "日志名1 日志名2" [用户名] [关联提案号]\033[0m'
         sys.exit(0)
-    elif log_name_in == '':
-        print "输入正确的GI日志文件。"
-        sys.exit(0)
     else:
         pass
 
 #if the user_name does not in the log_error, then get the web_url
 def get_web_url(log_name):
     print '\033[0;32;40m-\033[0m'*15 + '\033[0;32;40m%s\033[0m' % log_name + '\033[0;32;40m-\033[0m'*15 
+    os.system('cat %s/%s |grep "network error" |grep billno= |awk \'{print $1,$2","$0}\' |awk -F"," \'{print $1,$3,$5,$6,$7,$8}\' > %s/%s' %(log_dir, log_name, log_dir, log_error))
     with open('%s/%s' %(log_dir, log_error), 'r') as log_read:
         error_list = log_read.readlines()
-    os.system('cat %s/%s |grep "network error" |grep billno= |awk \'{print $1,$2","$0}\' |awk -F"," \'{print $1,$3,$5,$6,$7,$8}\' > %s/%s' %(log_dir, log_name, log_dir, log_error))
     for line in error_list:
         if user_name in line:
             print "\033[0;36;40m%s 的丢额在GI日志中:\033[0m" % user_name
@@ -91,6 +85,9 @@ if __name__ == "__main__":
     except:
         print '请输入正确的GI日志文件。'
         sys.exit(0)
+
+    #get the names of GI logs
+    gi_log_list = os.popen('ls %s/* |grep "catalina.out"' % log_dir).readlines()
 
     #introduce
     help_doc(log_name_in)
