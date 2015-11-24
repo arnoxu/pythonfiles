@@ -162,7 +162,7 @@ def _commit_git(commit_log, big_cut):
     commit_log_in = commit_log + big_cut
     with lcd(local_dir):
         try:    
-            local('git add ../*')
+            local('git add *')
             local("git commit -m ''' %s '''" % commit_log_in)
         except:
             print red('脚本没有被修改，请确认大客户是否添加/删除成功。')
