@@ -59,7 +59,7 @@ def get_web_url(log_name):
         if user_name in line:
             print "\033[0;36;40m%s 的丢额在GI日志中:\033[0m" % user_name
             print line
-            break
+            #break
     else:
         get_time_list = os.popen('cat %s/%s |grep %s |grep %s |awk -F":" \'{print $1":"$2}\' | tail -1' %(log_dir, log_name, user_name, user_bilno)).readlines()
         #print get_time_list
