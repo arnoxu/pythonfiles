@@ -1,0 +1,21 @@
+著作权归作者所有。
+商业转载请联系作者获得授权，非商业转载请注明出处。
+作者：叶文
+链接：https://www.zhihu.com/question/19571334/answer/25245070
+来源：知乎
+
+# 用 root 身份做如下操作 (高危! 请切记自己在干什么)
+sudo -s
+cd /sbin
+# 将系统自带的挂载程序改名
+mv mount_ntfs mount_ntfs_orig
+# 新建我们要的挂载脚本并编辑
+vim mount_ntfs#!/bin/sh/sbin/mount_ntfs_orig -o rw,nobrowse "$@"
+# 保存退出后改一下权限
+chmod a+x mount_ntfs
+# 都搞定了, 退出 root 身份
+exit
+然后就可以跟用其他类型分区一样的随意用了
+<del>有其他答案做类似操作时在 -o 参数里加了 nobrowse, 这个是让 GUI 默认不可见, 即 Finder 的左边栏 "设备" 里不出现, 找起来麻烦推出也麻烦, 个人建议不要加</del>
+// 2014.05.06 更新, 如果 -o 参数里不加 nobrowse 可能挂载上来的还是只读模式, 这个具体原因还没研究清楚, 如果遇到挂载上去还是只读, 将脚本里 -o rw 改成 -o rw,nobrowse
+// 为了方便访问, 可以在 finder 里用 cmd+shift+G 打开跳转, 输 /Volumes 进入所有磁盘目录, 然后在用 cmd+shift+T 将 /Volumes 保存到边栏
