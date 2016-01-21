@@ -34,14 +34,12 @@ Eastern = []
 def _check_host():
     if env.host in HK:
         env.key_filename = '/opt/fab/KEYS/hk_server'
-        env.password = '5FIq24TaAVA7tMjHAW4K'
     elif env.host in Amazon:
         env.key_filename = '/opt/fab/KEYS/amazon_server'
     elif env.host in Eastern:
         env.key_filename = '/opt/fab/KEYS/eastern_server' 
     else:
-        env.password = 'ygGP2&huhytAqza!NwJR'
-
+        pass
 #判断本地大客户脚本是否与远程服务器的一致
 #如果不一致则进行更新
 @runs_once
