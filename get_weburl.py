@@ -21,8 +21,9 @@ def estimate_log(log_name):
 
 #get the information of the users who may lost their account.
 def get_info(log_name):
-    print '\033[0;32;40m-\033[0m'*15 + '\033[0;32;40m%s\033[0m' % log_name + '\033[0;32;40m-\033[0m'*15 
-    os.system('cat %s/%s |grep "network error" |grep billno= |awk \'{print $1,$2","$0}\' |awk -F"," \'{print $1,$3,$5,$6,$7,$8}\' > %s/%s' %(log_dir, log_name, log_dir, log_error))
+    #print '\033[0;32;40m-\033[0m'*17 + '\033[0;32;40m%s\033[0m' % log_name + '\033[0;32;40m-\033[0m'*17 
+    print '\n' + '\033[0;32;40m-\033[0m'*(int((46 - len(log_name))/2)) + '\033[0;32;40m%s\033[0m' % log_name + '\033[0;32;40m-\033[0m'*(int(float(46 - len(log_name))/2 + 0.5)) + '\n'
+    os.system('cat %s/%s |grep "network error" |grep billno= |awk \'{print $1,$2","$0}\' |awk -F"," \'{print $1,$3,$5,$6,$7,$8}\' | uniq > %s/%s' %(log_dir, log_name, log_dir, log_error))
     os.system('cat %s/%s' %(log_dir, log_error))
 
 #if sys.argv[2] and sys.argv[3] do not exist, then exit.
@@ -51,15 +52,19 @@ def help_doc(log_name_in):
 
 #if the user_name does not in the log_error, then get the web_url
 def get_web_url(log_name):
-    print '\033[0;32;40m-\033[0m'*15 + '\033[0;32;40m%s\033[0m' % log_name + '\033[0;32;40m-\033[0m'*15 
-    os.system('cat %s/%s |grep "network error" |grep billno= |awk \'{print $1,$2","$0}\' |awk -F"," \'{print $1,$3,$5,$6,$7,$8}\' > %s/%s' %(log_dir, log_name, log_dir, log_error))
+    print '\n' + '\033[0;32;40m-\033[0m'*(int((46 - len(log_name))/2)) + '\033[0;32;40m%s\033[0m' % log_name + '\033[0;32;40m-\033[0m'*(int(float(46 - len(log_name))/2 + 0.5)) + '\n'
+    os.system('cat %s/%s |grep "network error" |grep billno= |awk \'{print $1,$2","$0}\' |awk -F"," \'{print $1,$3,$5,$6,$7,$8}\'|uniq > %s/%s' %(log_dir, log_name, log_dir, log_error))
     with open('%s/%s' %(log_dir, log_error), 'r') as log_read:
         error_list = log_read.readlines()
+    count = 0
     for line in error_list:
         if user_name in line:
             print "\033[0;36;40m%s 的丢额在GI日志中:\033[0m" % user_name
-            print line
+            print line,
+            count += 1
             #break
+        if count > 0:
+            break
     else:
         get_time_list = os.popen('cat %s/%s |grep %s |grep %s |awk -F":" \'{print $1":"$2}\' | tail -1' %(log_dir, log_name, user_name, user_bilno)).readlines()
         #print get_time_list
@@ -69,6 +74,7 @@ def get_web_url(log_name):
             time_str = get_time_list[0].replace('\n', '')
             web_url_list = ['ag6.net\n', 'ag6.com\n', 'ag8.com\n', 'ag9.com\n', 'www.ag6.net\n', 'www.ag6.com\n', 'www.ag8.com\n', 'www.ag9.com\n']
             web_url_log_list = os.popen('cat %s/%s |grep "%s" |grep "%s"|awk -F"/" \'{print $3}\'' %(log_dir, log_name, user_name, time_str)).readlines()
+            #web_url_log_list = os.popen('cat %s/%s |grep "%s" |awk -F"/" \'{print $3}\'' %(log_dir, log_name, user_name)).readlines()
             for web_url in web_url_list:
                 if web_url in web_url_log_list:
                     print "\033[0;36;40m%s 的丢额没在GI日志中:\033[0m" % user_name
@@ -104,7 +110,7 @@ if __name__ == "__main__":
     #get the information of the users who may lost their account.
     for log_name in log_name_list:
         get_info(log_name)
-    print '\033[0;32;40m-\033[0m'*20 + '\033[0;32;40m分界线\033[0m' + '\033[0;32;40m-\033[0m'*20
+    print '\n' + '\033[0;32;40m-\033[0m'*20 + '\033[0;32;40m分界线\033[0m' + '\033[0;32;40m-\033[0m'*20 + '\n'
 
     #if sys.argv[2] and sys.argv[3] do not exist, then exit.
     not_exist()
@@ -112,4 +118,4 @@ if __name__ == "__main__":
     #if the user_name does not in the log_error, then get the web_url
     for log_name in log_name_list:
         get_web_url(log_name)
-    print '\033[0;32;40m-\033[0m'*20 + '\033[0;32;40m分界线\033[0m' + '\033[0;32;40m-\033[0m'*20
+    print '\n' + '\033[0;32;40m-\033[0m'*20 + '\033[0;32;40m分界线\033[0m' + '\033[0;32;40m-\033[0m'*20
