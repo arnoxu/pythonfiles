@@ -4,7 +4,7 @@
 #author: arno
 
 TomcatFile='/arno/shell/tomcat_info.txt'
-MAIL='Arno@ag866.com'
+MAIL='Arno@ag866.com ai_yan125@126.com'
 
 # 日志输出
 GetPageInfo=/dev/null
@@ -48,6 +48,6 @@ echo "----------------------------------------------" >> $TomcatMonitorLog
 if [ -s $TomcatTempLog ];then
     echo "" >> $TomcatTempLog
     echo "注：该检测脚本在192.168.100.107:/usr/local/shell/上。" >> $TomcatTempLog
-    cat $TomcatTempLog |/bin/mail -s "tomcat test alarm" $MAIL
+    /bin/mail -s "tomcat test alarm" $MAIL < $TomcatTempLog
     rm -rf $TomcatTempLog
 fi
